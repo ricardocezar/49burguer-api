@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: 49burguer-api
+    ports:
+      - "3000:3000"
+    restart: always
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm run start"
+    depends_on:
+      - db
+      - migrator
+    env_file: .env
+
+  db:
+    image: postgres:15
+    container_name: 49burguer-db
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file: .env.docker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  migrator:
+    image: node:18-alpine
+    container_name: 49burguer-migrator
+    working_dir: /app
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file: .env.docker
+    command: sh -c "npm ci && npx prisma migrate deploy"
+    
+volumes:
+  postgres_data:
