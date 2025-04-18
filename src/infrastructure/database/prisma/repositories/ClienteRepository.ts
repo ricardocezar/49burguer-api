@@ -11,7 +11,7 @@ export class ClienteRepository implements IClienteRepository {
       where: { cpf },
     });
     if (!registro || !registro.ativo) return null;
-    return new Cliente({nome: registro.nome, cpf: registro.cpf});
+    return new Cliente({ nome: registro.nome, cpf: registro.cpf, email: registro.email });
   }
 
   async buscarTodos(
@@ -19,7 +19,7 @@ export class ClienteRepository implements IClienteRepository {
     limit: number = 15
   ): Promise<ResultadoPaginado<Cliente>> {
     const [total, registros] = await this.prisma.$transaction([
-      this.prisma.cliente.count({where: { ativo: true }}),
+      this.prisma.cliente.count({ where: { ativo: true } }),
       this.prisma.cliente.findMany({
         skip: (page - 1) * limit,
         take: Number(limit),
@@ -30,7 +30,7 @@ export class ClienteRepository implements IClienteRepository {
     const totalPaginas = Math.ceil(total / limit);
 
     const clientes = registros.map((registro: any) => {
-      return new Cliente({nome: registro.nome, cpf: registro.cpf});
+      return new Cliente({ nome: registro.nome, cpf: registro.cpf });
     });
 
     return {
@@ -43,13 +43,31 @@ export class ClienteRepository implements IClienteRepository {
   }
 
   async salvar(cliente: Cliente): Promise<Cliente> {
+    const clienteInativoExistente = await this.prisma.cliente.findUnique({
+      where: { cpf: cliente.getCpf(), ativo: false },
+    });
+    if (clienteInativoExistente) {
+      const clienteAtualizado = await this.prisma.cliente.update({
+        where: { cpf: cliente.getCpf() },
+        data: {
+          nome: cliente.getNome(),
+          atualizado_em: new Date(),
+          ativo: true,
+        },
+      });
+      return new Cliente({
+        nome: clienteAtualizado.nome,
+        cpf: clienteAtualizado.cpf,
+        email: clienteAtualizado.email,
+      });
+    }
     const novoCliente = await this.prisma.cliente.create({
       data: {
         nome: cliente.getNome(),
         cpf: cliente.getCpf(),
       },
     });
-    return new Cliente({nome: novoCliente.nome, cpf: novoCliente.cpf});
+    return new Cliente({ nome: novoCliente.nome, cpf: novoCliente.cpf, email: novoCliente.email });
   }
 
   async atualizar(cliente: Cliente): Promise<Cliente> {
@@ -58,15 +76,19 @@ export class ClienteRepository implements IClienteRepository {
       data: {
         nome: cliente.getNome(),
         cpf: cliente.getCpf(),
-        atualizado_em: new Date()
+        atualizado_em: new Date(),
       },
     });
-    return new Cliente({nome: clienteAtualizado.nome, cpf: clienteAtualizado.cpf});
+    return new Cliente({
+      nome: clienteAtualizado.nome,
+      cpf: clienteAtualizado.cpf,
+      email: clienteAtualizado.email,
+    });
   }
 
-  async remover(id: number): Promise<void> {
+  async remover(cpf: string): Promise<void> {
     await this.prisma.cliente.update({
-      where: { id },
+      where: { cpf },
       data: { ativo: false, atualizado_em: new Date() },
     });
   }

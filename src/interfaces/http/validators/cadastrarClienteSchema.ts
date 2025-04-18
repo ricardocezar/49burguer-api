@@ -19,4 +19,13 @@ export const cadastrarClienteSchema = Joi.object({
       "any.required": "O CPF é obrigatório",
       "string.pattern.name": "O CPF deve estar no formato XXX.XXX.XXX-XX",
     }),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .messages({
+      "string.base": "O email deve ser uma string",
+      "string.empty": "O email não pode ser vazio",
+      "string.email": "O email deve ser um endereço de email válido",
+      "any.required": "O email é obrigatório",
+    }),
 });

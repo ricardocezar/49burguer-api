@@ -1,8 +1,8 @@
-import { Cliente } from "@/domain/entities/Cliente";
+import { ClienteOutputDTO } from "./ClienteOutputDTO";
 
 export class ListaDeClientesOutputDTO {
   constructor(
-    public clientes: Cliente[],
+    public clientes: ClienteOutputDTO[],
     public total: number,
     public pagina: number,
     public limite: number,

@@ -1,11 +1,9 @@
 import express from "express";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import swaggerConfig from "./interfaces/docs/swagger";
-import clienteRoutes from './interfaces/http/routes/cliente.routes';
 import { errorHandler } from "./interfaces/http/middlewares/errorHandler";
 import { securityMiddleware } from "./interfaces/http/middlewares/security.middleware";
+import routes from "./interfaces/http/routes/index.routes"; // Adjust the path as needed
 require('module-alias/register');
 
 // Configurações
@@ -18,7 +16,7 @@ app.use(express.json());
 app.use(securityMiddleware());
 swaggerConfig(app);
 
-app.use('/clientes', clienteRoutes);
+app.use('/api', routes);
 
 app.use(errorHandler); //nao tira esse caraio daqui
 app.listen(port, () => console.log(`Server rodando na porta ${port}`));

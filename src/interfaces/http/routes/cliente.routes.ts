@@ -10,6 +10,7 @@ import { listarClientesSchema } from "../validators/listarClientesSchema";
 import { BuscarClientePorCpfUsecase } from '../../../application/use-cases/cliente/BuscarClientePorCpfUseCase';
 import { buscarClientePorCpfSchema } from "../validators/buscarClientePorCpfSchema";
 import { AtualizarClienteUseCase } from "@/application/use-cases/cliente/AtualizarClienteUseCase";
+import { RemoverClienteUseCase } from "@/application/use-cases/cliente/RemoverClienteUseCase";
 
 const clienteRoutes = Router();
 const prismaClient = new PrismaClient();
@@ -18,12 +19,14 @@ const cadastrarClienteUseCase = new CadastrarClienteUseCase(clienteRepository);
 const listarClientesUseCase = new ListarClientesUseCase(clienteRepository);
 const buscarClientePorCpfUsecase = new BuscarClientePorCpfUsecase(clienteRepository);
 const atualizarClienteUseCase = new AtualizarClienteUseCase(clienteRepository);
+const removerClienteUseCase = new RemoverClienteUseCase(clienteRepository);
 
 const clienteController = new ClienteController(
   cadastrarClienteUseCase,
   listarClientesUseCase,
   buscarClientePorCpfUsecase,
-  atualizarClienteUseCase
+  atualizarClienteUseCase,
+  removerClienteUseCase
 );
 
 clienteRoutes.post(

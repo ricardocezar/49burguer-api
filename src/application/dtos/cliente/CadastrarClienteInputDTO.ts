@@ -1,3 +1,3 @@
 export class CadastrarClienteInputDTO {
-  constructor(public nome: string, public cpf: string) {}
+  constructor(public nome: string, public cpf: string, public email: string) {}
 }

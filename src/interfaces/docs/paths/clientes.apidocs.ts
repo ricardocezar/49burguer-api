@@ -1,5 +1,5 @@
 const clientesApi = {
-  "/clientes": {
+  "/v1/clientes": {
     get: {
       tags: ["Cadastro de Clientes"],
       summary: "Listar todos os clientes",
@@ -32,10 +32,8 @@ const clientesApi = {
                   clientes: {
                     type: "array",
                     items: {
-                      type: "object",
-                      properties: {
-                        nome: { type: "string" },
-                        cpf: { type: "string" },
+                      schema: {
+                        $ref: "#/components/schemas/Cliente",
                       },
                     },
                   },
@@ -68,13 +66,29 @@ const clientesApi = {
               properties: {
                 nome: {
                   type: "string",
+                  description: "Nome do cliente",
+                  required: true,
                   minLength: 3,
                   maxLength: 50,
                   example: "João da Silva",
                 },
                 cpf: {
                   type: "string",
-                  example: "12345678901",
+                  description: "CPF do cliente no formato XXX.XXX.XXX-XX",
+                  required: true,
+                  minLength: 14,
+                  maxLength: 14,
+                  example: "123.456.789-01",
+                  schema: {
+                    type: "string",
+                    pattern: "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$",
+                  },
+                },
+                email: {
+                  type: "string",
+                  format: "email",
+                  description: "Email do cliente",
+                  required: true,
                 },
               },
             },
@@ -87,11 +101,17 @@ const clientesApi = {
           content: {
             "application/json": {
               schema: {
-                type: "object",
-                properties: {
-                  nome: { type: "string", example: "João da Silva" },
-                  cpf: { type: "string", example: "12345678901" },
-                },
+                $ref: "#/components/schemas/Cliente",
+              },
+            },
+          },
+        },
+        409: {
+          description: "Conflito ao cadastrar cliente",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
               },
             },
           },
@@ -108,8 +128,110 @@ const clientesApi = {
         },
       },
     },
+    patch: {
+      tags: ["Cadastro de Clientes"],
+      summary: "Atualizar um cliente existente",
+      parameters: [
+        {
+          name: "cpf",
+          in: "path",
+          required: true,
+          description: "CPF do cliente no formato XXX.XXX.XXX-XX",
+          schema: {
+            type: "string",
+            pattern: "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$",
+          },
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                nome: {
+                  type: "string",
+                  minLength: 3,
+                  maxLength: 50,
+                  example: "João da Silva",
+                },
+                email: {
+                  type: "string",
+                  format: "email",
+                  description: "Email do cliente",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Cliente atualizado com sucesso",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Cliente",
+              },
+            },
+          },
+        },
+        400: {
+          description: "Erro de validação",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
+              },
+            },
+          },
+        },
+        404: {
+          description: "Cliente não encontrado",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
+              },
+            },
+          },
+        },
+      },
+    },
+    delete: {
+      tags: ["Cadastro de Clientes"],
+      summary: "Remover um cliente",
+      parameters: [
+        {
+          name: "cpf",
+          in: "path",
+          required: true,
+          description: "CPF do cliente no formato XXX.XXX.XXX-XX",
+          schema: {
+            type: "string",
+            pattern: "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$",
+          },
+        },
+      ],
+      responses: {
+        204: {
+          description: "Cliente removido com sucesso",
+        },
+        404: {
+          description: "Cliente não encontrado",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
+              },
+            },
+          },
+        },
+      },
+    },
   },
-  "/clientes/{cpf}": {
+  "/v1/clientes/{cpf}": {
     get: {
       tags: ["Cadastro de Clientes"],
       summary: "Buscar cliente por CPF",
@@ -118,12 +240,33 @@ const clientesApi = {
           name: "cpf",
           in: "path",
           required: true,
-          schema: { type: "string" },
+          description: "CPF do cliente no formato XXX.XXX.XXX-XX",
+          schema: {
+            type: "string",
+            pattern: "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$",
+          },
         },
       ],
       responses: {
         200: {
-          /* ... */
+          description: "Cliente encontrado",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Cliente",
+              },
+            },
+          },
+        },
+        400: {
+          description: "Erro de validação",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
+              },
+            },
+          },
         },
         404: {
           description: "Cliente não encontrado",

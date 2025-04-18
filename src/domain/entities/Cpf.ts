@@ -7,7 +7,7 @@ export class Cpf {
     this.cpfNumber = cpfNumber;
   }
 
-  public getValue(): string {
+  public get numero(): string {
     return this.cpfNumber;
   }
 

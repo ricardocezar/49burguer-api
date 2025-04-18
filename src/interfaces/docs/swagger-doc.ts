@@ -9,7 +9,7 @@ const swaggerDocument = {
   },
   servers: [
     {
-      url: 'http://localhost:3000',
+      url: 'http://localhost:3000/api',
     },
   ],
   tags: [
@@ -44,6 +44,14 @@ const swaggerDocument = {
           },
         },
       },
+      Cliente: {
+        type: 'object',
+        properties: {
+          nome: { type: 'string', example: 'João Silva' },
+          cpf: { type: 'string', example: '123.456.789-00' },
+          email: { type: 'string', example: 'email@email.com'}
+        },
+      }
     },
   },
 };

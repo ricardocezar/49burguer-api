@@ -1,3 +1,3 @@
 export class AtualizarClienteInputDTO {
-  constructor(public nome: string) {}
+  constructor(public nome: string, public email: string) {}
 }

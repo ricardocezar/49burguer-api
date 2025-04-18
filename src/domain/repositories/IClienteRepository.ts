@@ -6,5 +6,5 @@ export interface IClienteRepository {
     buscarTodos(page: number, limit: number): Promise<ResultadoPaginado<Cliente>>;
     salvar(cliente: Cliente): Promise<Cliente>;
     atualizar(cliente: Cliente): Promise<Cliente>;
-    remover(id: number): Promise<void>;
+    remover(cpf: string): Promise<void>;
 }
