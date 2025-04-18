@@ -24,3 +24,23 @@ model Cliente {
 
   @@map("clientes")
 }
+
+enum Categoria {
+  LANCHE
+  ACOMPANHAMENTO
+  BEBIDA
+  SOBREMESA
+}
+
+model Produto {
+  id             Int        @id @default(autoincrement())
+  descricao      String     @db.VarChar(200)
+  preco          Float
+  categoria      Categoria
+  ativo          Boolean    @default(true)
+  criadoEm       DateTime   @default(now()) @map("criado_em")
+  atualizadoEm   DateTime   @updatedAt @map("atualizado_em")
+
+  @@index([categoria])
+  @@map("produtos")
+}

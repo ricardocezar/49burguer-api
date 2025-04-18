@@ -3,6 +3,10 @@ import { CpfInvalidoException } from "@/domain/errors/CpfInvalidoException";
 import { ErrorRequestHandler } from "express";
 import { ErrorResponse } from "../dtos/ErrorResponse";
 import { ClienteNaoEncontradoException } from "@/domain/errors/ClienteNaoEncontradoException";
+import { CategoriaInvalidaException } from "@/domain/errors/CategoriaInvalidaException";
+import { Preco } from "@/domain/entities/Preco";
+import { PrecoInvalidoException } from "@/domain/errors/PrecoInvalidoException";
+import { ProdutoNaoEncontrado } from "@/domain/errors/ProdutoNaoEncontrado";
 
 export const errorHandler: ErrorRequestHandler = (
   err: any,
@@ -25,17 +29,44 @@ export const errorHandler: ErrorRequestHandler = (
   });
 
   if (err instanceof ClienteJaCadastradoException) {
-    const response = buildErrorResponse(409, "Conflict", err.message, [err.message]);
+    const response = buildErrorResponse(409, "Conflict", err.message, [
+      err.message,
+    ]);
     return res.status(409).json(response);
   }
 
   if (err instanceof CpfInvalidoException) {
-    const response = buildErrorResponse(400, "Bad Request", err.message, [err.message]);
+    const response = buildErrorResponse(400, "Bad Request", err.message, [
+      err.message,
+    ]);
     return res.status(400).json(response);
   }
 
   if (err instanceof ClienteNaoEncontradoException) {
-    const response = buildErrorResponse(404, "Not Found", err.message, [err.message]);
+    const response = buildErrorResponse(404, "Not Found", err.message, [
+      err.message,
+    ]);
+    return res.status(404).json(response);
+  }
+
+  if (err instanceof CategoriaInvalidaException) {
+    const response = buildErrorResponse(400, "Bad Request", err.message, [
+      err.message,
+    ]);
+    return res.status(400).json(response);
+  }
+
+  if (err instanceof PrecoInvalidoException) {
+    const response = buildErrorResponse(400, "Bad Request", err.message, [
+      err.message,
+    ]);
+    return res.status(400).json(response);
+  }
+
+  if (err instanceof ProdutoNaoEncontrado) {
+    const response = buildErrorResponse(404, "Not Found", err.message, [
+      err.message,
+    ]);
     return res.status(404).json(response);
   }
 

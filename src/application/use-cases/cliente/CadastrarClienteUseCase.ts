@@ -12,8 +12,8 @@ export class CadastrarClienteUseCase {
       input.cpf
     );
     if (clienteExistente) throw new ClienteJaCadastradoException(input.cpf);
-    const cliente = new Cliente({nome: input.nome, cpf: input.cpf});
+    const cliente = new Cliente({nome: input.nome, cpf: input.cpf, email: input.email});
     const clienteCadastrado = await this.clienteRepository.salvar(cliente);
-    return new ClienteOutputDTO(clienteCadastrado.getNome(), clienteCadastrado.getCpf());
+    return new ClienteOutputDTO(clienteCadastrado.getNome(), clienteCadastrado.getCpf(), clienteCadastrado.getEmail());
   }
 }
