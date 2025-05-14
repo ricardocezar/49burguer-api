@@ -50,7 +50,8 @@
     "passport-jwt": "^4.0.1",
     "prisma": "^6.6.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "uuidv7": "^1.0.2"
   },
   "_moduleAliases": {
     "@": "src"
