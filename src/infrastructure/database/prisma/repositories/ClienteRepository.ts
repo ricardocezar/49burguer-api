@@ -1,4 +1,4 @@
-import { Cliente } from "@/domain/entities/Cliente";
+import { Cliente } from "@/domain/entities/cliente/Cliente";
 import { IClienteRepository } from "@/domain/repositories/IClienteRepository";
 import { ResultadoPaginado } from "@/domain/repositories/ResultadoPaginado";
 import { PrismaClient } from "@prisma/client";

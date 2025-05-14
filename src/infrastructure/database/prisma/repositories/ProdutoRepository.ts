@@ -1,5 +1,5 @@
-import { Categoria } from "@/domain/entities/Categoria";
-import { Produto } from "@/domain/entities/Produto";
+import { Categoria } from "@/domain/entities/produto/Categoria";
+import { Produto } from "@/domain/entities/produto/Produto";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 import { ResultadoPaginado } from "@/domain/repositories/ResultadoPaginado";
 import { PrismaClient } from "@prisma/client";

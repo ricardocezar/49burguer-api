@@ -1,6 +1,6 @@
 import { CadastrarProdutoInputDTO } from "@/application/dtos/produto/CadastrarProdutoInputDTO";
 import { ProdutoOutputDTO } from "@/application/dtos/produto/ProdutoOutputDTO";
-import { Produto } from "@/domain/entities/Produto";
+import { Produto } from "@/domain/entities/produto/Produto";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 
 export class CadastrarProdutoUsecase {

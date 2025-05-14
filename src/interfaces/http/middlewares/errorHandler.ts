@@ -4,7 +4,7 @@ import { ErrorRequestHandler } from "express";
 import { ErrorResponse } from "../dtos/ErrorResponse";
 import { ClienteNaoEncontradoException } from "@/domain/errors/ClienteNaoEncontradoException";
 import { CategoriaInvalidaException } from "@/domain/errors/CategoriaInvalidaException";
-import { Preco } from "@/domain/entities/Preco";
+import { Preco } from "@/domain/entities/produto/Preco";
 import { PrecoInvalidoException } from "@/domain/errors/PrecoInvalidoException";
 import { ProdutoNaoEncontrado } from "@/domain/errors/ProdutoNaoEncontrado";
 

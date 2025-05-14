@@ -1,5 +1,5 @@
 import { ProdutosPorCategoriaOutputDTO } from "@/application/dtos/produto/ProdutosPorCategoriaOutputDTO";
-import { Categoria } from "@/domain/entities/Categoria";
+import { Categoria } from "@/domain/entities/produto/Categoria";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 
 export class ListarProdutosPorCategoriaUsecase {

@@ -1,6 +1,6 @@
 import { IClienteRepository } from "@/domain/repositories/IClienteRepository";
 import { CadastrarClienteInputDTO } from "../../dtos/cliente/CadastrarClienteInputDTO";
-import { Cliente } from "@/domain/entities/Cliente";
+import { Cliente } from "@/domain/entities/cliente/Cliente";
 import { ClienteJaCadastradoException } from "@/domain/errors/ClienteJaCadastradoException";
 import { ClienteOutputDTO } from "../../dtos/cliente/ClienteOutputDTO";
 

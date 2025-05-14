@@ -1,4 +1,4 @@
-import { CpfInvalidoException } from "../errors/CpfInvalidoException";
+import { CpfInvalidoException } from "../../errors/CpfInvalidoException";
 
 export class Cpf {
   private cpfNumber: string;

@@ -1,4 +1,4 @@
-import { Cliente } from "../entities/Cliente";
+import { Cliente } from "../entities/cliente/Cliente";
 import { ResultadoPaginado } from "./ResultadoPaginado";
 
 export interface IClienteRepository {

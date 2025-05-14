@@ -1,5 +1,5 @@
 import { Categoria } from "../entities/Categoria";
-import { Produto } from "../entities/Produto";
+import { Produto } from "../entities/produto/Produto";
 import { ResultadoPaginado } from "./ResultadoPaginado";
 
 export interface IProdutoRepository {
