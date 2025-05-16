@@ -1,5 +1,6 @@
 import { IClienteRepository } from "@/domain/repositories/IClienteRepository";
 import { ListaDeClientesOutputDTO } from "../../dtos/cliente/ListaDeClientesOutputDTO";
+import { ClienteOutputDTO } from "@/application/dtos/cliente/ClienteOutputDTO";
 
 export class ListarClientesUseCase {
   constructor(private readonly clienteRepository: IClienteRepository) {}
@@ -16,7 +17,7 @@ export class ListarClientesUseCase {
       quantidade
     );
     const lista: ListaDeClientesOutputDTO = {
-      clientes: result.dados || [],
+      clientes: result.dados.map(c => c as unknown as ClienteOutputDTO) || [],
       total: result.total,
       pagina: result.pagina,
       limite: result.limite,

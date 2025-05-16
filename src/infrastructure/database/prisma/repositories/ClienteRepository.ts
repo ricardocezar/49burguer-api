@@ -30,7 +30,7 @@ export class ClienteRepository implements IClienteRepository {
     const totalPaginas = Math.ceil(total / limit);
 
     const clientes = registros.map((registro: any) => {
-      return new Cliente({ nome: registro.nome, cpf: registro.cpf });
+      return new Cliente({ nome: registro.nome, cpf: registro.cpf, email: registro.email });
     });
 
     return {
@@ -51,7 +51,7 @@ export class ClienteRepository implements IClienteRepository {
         where: { cpf: cliente.getCpf() },
         data: {
           nome: cliente.getNome(),
-          atualizado_em: new Date(),
+          atualizadoEm: new Date(),
           ativo: true,
         },
       });
@@ -65,6 +65,7 @@ export class ClienteRepository implements IClienteRepository {
       data: {
         nome: cliente.getNome(),
         cpf: cliente.getCpf(),
+        email: cliente.getEmail(),
       },
     });
     return new Cliente({ nome: novoCliente.nome, cpf: novoCliente.cpf, email: novoCliente.email });
@@ -76,7 +77,7 @@ export class ClienteRepository implements IClienteRepository {
       data: {
         nome: cliente.getNome(),
         cpf: cliente.getCpf(),
-        atualizado_em: new Date(),
+        atualizadoEm: new Date(),
       },
     });
     return new Cliente({
@@ -89,7 +90,7 @@ export class ClienteRepository implements IClienteRepository {
   async remover(cpf: string): Promise<void> {
     await this.prisma.cliente.update({
       where: { cpf },
-      data: { ativo: false, atualizado_em: new Date() },
+      data: { ativo: false, atualizadoEm: new Date() },
     });
   }
 }
