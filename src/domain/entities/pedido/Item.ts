@@ -2,6 +2,7 @@ import { ItemInvalidoException } from "@/domain/errors/ItemInvalidoException";
 import { Produto } from "../produto/Produto";
 
 export class Item {
+  private readonly valorUnitario: number;
   constructor(
     private readonly produto: Produto,
     private quantidade: number,
@@ -12,6 +13,7 @@ export class Item {
     if (!produto) {
       throw new ItemInvalidoException("O produto não pode ser nulo.");
     }
+    this.valorUnitario = produto.getPreco();
   }
 
   public getProduto(): Produto {
@@ -22,8 +24,8 @@ export class Item {
     return this.quantidade;
   }
 
-  public getValorDoItem(): number {
-    return this.produto.getPreco() * this.quantidade;
+  public getValorTotalDoItem(): number {
+    return this.valorUnitario * this.quantidade;
   }
 
   public adicionarQuantidade(quantidade: number): void {

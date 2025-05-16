@@ -8,7 +8,7 @@ export class BuscarClientePorCpfUsecase {
   async execute(cpf: string): Promise<ClienteOutputDTO> {
     const cliente = await this.clienteRepository.buscarPorCpf(cpf);
     if (cliente) {
-      return new ClienteOutputDTO(cliente.getNome(), cliente.getCpf());
+      return new ClienteOutputDTO(cliente.getNome(), cliente.getCpf(), cliente.getEmail());
     }
     throw new ClienteNaoEncontradoException(cpf);
   }

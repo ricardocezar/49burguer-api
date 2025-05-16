@@ -1,4 +1,4 @@
-import { Categoria } from "../entities/Categoria";
+import { Categoria } from "../entities/produto/Categoria";
 import { Produto } from "../entities/produto/Produto";
 import { ResultadoPaginado } from "./ResultadoPaginado";
 

@@ -1,8 +1,8 @@
-import { Categoria } from "@/domain/entities/produto/Categoria";
+import { Categoria } from '@/domain/entities/produto/Categoria';
 import { Produto } from "@/domain/entities/produto/Produto";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 import { ResultadoPaginado } from "@/domain/repositories/ResultadoPaginado";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Categoria as PrismaCategoria } from "@prisma/client";
 
 export class ProdutoRepository implements IProdutoRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -11,6 +11,9 @@ export class ProdutoRepository implements IProdutoRepository {
     const produtoEncontrado = await this.prisma.produto.findUnique({
       where: { id, ativo: true },
     });
+    if (!produtoEncontrado) {
+      return null;
+    }
     return new Produto(
       produtoEncontrado.descricao,
       produtoEncontrado.preco,
@@ -54,7 +57,7 @@ export class ProdutoRepository implements IProdutoRepository {
       data: {
         descricao: produto.getDescricao(),
         preco: produto.getPreco(),
-        categoria: produto.getCategoria(),
+        categoria: produto.getCategoria() as PrismaCategoria,
       },
     });
     return new Produto(
@@ -71,7 +74,7 @@ export class ProdutoRepository implements IProdutoRepository {
       data: {
         descricao: produto.getDescricao(),
         preco: produto.getPreco(),
-        categoria: produto.getCategoria(),
+        categoria: produto.getCategoria() as PrismaCategoria,
       },
     });
     return new Produto(
@@ -92,7 +95,7 @@ export class ProdutoRepository implements IProdutoRepository {
   async buscarPorCategoria(categoria: Categoria): Promise<Produto[]> {
     return this.prisma.produto
       .findMany({
-        where: { categoria: categoria, ativo: true },
+        where: { categoria: categoria.descricao as PrismaCategoria, ativo: true },
         orderBy: [{ categoria: "asc" }, { descricao: "asc" }],
       })
       .then((produtos) => {
