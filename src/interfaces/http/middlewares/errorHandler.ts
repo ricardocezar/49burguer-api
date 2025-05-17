@@ -4,9 +4,8 @@ import { ErrorRequestHandler } from "express";
 import { ErrorResponse } from "../dtos/ErrorResponse";
 import { ClienteNaoEncontradoException } from "@/domain/errors/ClienteNaoEncontradoException";
 import { CategoriaInvalidaException } from "@/domain/errors/CategoriaInvalidaException";
-import { Preco } from "@/domain/entities/produto/Preco";
 import { PrecoInvalidoException } from "@/domain/errors/PrecoInvalidoException";
-import { ProdutoNaoEncontrado } from "@/domain/errors/ProdutoNaoEncontrado";
+import { ProdutoNaoEncontradoException } from "@/domain/errors/ProdutoNaoEncontradoException";
 
 export const errorHandler: ErrorRequestHandler = (
   err: any,
@@ -63,7 +62,7 @@ export const errorHandler: ErrorRequestHandler = (
     return res.status(400).json(response);
   }
 
-  if (err instanceof ProdutoNaoEncontrado) {
+  if (err instanceof ProdutoNaoEncontradoException) {
     const response = buildErrorResponse(404, "Not Found", err.message, [
       err.message,
     ]);

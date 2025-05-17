@@ -14,7 +14,7 @@ export class PedidoRepository implements IPedidoRepository {
     });
     const pedidoCriado = await this.prisma.pedido.create({
       data: {
-        id: pedido.getId(),
+        id: pedido.getId()!,
         comanda: pedido.getComanda() ?? null,
         status: pedido.getStatus() as PrismaStatus,
         observacao: pedido.getObservacao(),
@@ -28,7 +28,7 @@ export class PedidoRepository implements IPedidoRepository {
               },
             },
             pedidoId: pedido.getId(),
-            valorIndividual: item.getValorTotalDoItem(),
+            valorIndividual: item.getProduto().getPreco(),
             quantidade: item.getQuantidade(),
           })),
         },

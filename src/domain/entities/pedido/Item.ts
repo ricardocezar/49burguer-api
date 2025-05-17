@@ -3,10 +3,7 @@ import { Produto } from "../produto/Produto";
 
 export class Item {
   private readonly valorUnitario: number;
-  constructor(
-    private readonly produto: Produto,
-    private quantidade: number,
-  ) {
+  constructor(private readonly produto: Produto, private quantidade: number) {
     if (quantidade <= 0) {
       throw new ItemInvalidoException("A quantidade deve ser maior que zero.");
     }
@@ -24,25 +21,19 @@ export class Item {
     return this.quantidade;
   }
 
+  public getValorUnitario(): number {
+    return this.valorUnitario;
+  }
+
   public getValorTotalDoItem(): number {
     return this.valorUnitario * this.quantidade;
   }
 
-  public adicionarQuantidade(quantidade: number): void {
+  public substituirQuantidade(quantidade: number): void {
     if (quantidade <= 0) {
       throw new ItemInvalidoException("A quantidade deve ser maior que zero.");
     }
-    this.quantidade += quantidade;
-  }
-
-  public removerQuantidade(quantidade: number): void {
-    if (quantidade <= 0) {
-      throw new ItemInvalidoException("A quantidade deve ser maior que zero.");
-    }
-    if (this.quantidade - quantidade < 0) {
-      this.quantidade = 0;
-    }
-    this.quantidade -= quantidade;
+    this.quantidade = quantidade;
   }
 
   public vazio(): boolean {

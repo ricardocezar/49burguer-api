@@ -22,6 +22,20 @@ export class ProdutoRepository implements IProdutoRepository {
     );
   }
 
+  async buscarPorIds(ids: number[]): Promise<Produto[]> {
+    const produtosEncontrados = await this.prisma.produto.findMany({
+      where: { id: { in: ids }, ativo: true },
+    });
+    return produtosEncontrados.map((produto) => {
+      return new Produto(
+        produto.descricao,
+        produto.preco,
+        produto.categoria,
+        produto.id
+      );
+    });
+  }
+
   async buscarTodos(
     page: number,
     limit: number

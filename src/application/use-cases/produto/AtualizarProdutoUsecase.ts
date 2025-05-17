@@ -1,6 +1,6 @@
 import { AtualizarProdutoInputDTO } from "@/application/dtos/produto/AtualizarProdutoInputDTO";
 import { ProdutoOutputDTO } from "@/application/dtos/produto/ProdutoOutputDTO";
-import { ProdutoNaoEncontrado } from "@/domain/errors/ProdutoNaoEncontrado";
+import { ProdutoNaoEncontradoException } from "@/domain/errors/ProdutoNaoEncontradoException";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 
 export class AtualizarProdutoUsecase {
@@ -9,7 +9,7 @@ export class AtualizarProdutoUsecase {
   async execute(id: number, input: AtualizarProdutoInputDTO): Promise<ProdutoOutputDTO> {
     let produtoEncontrado = await this.produtoRepository.buscarPorId(id);
     if (!produtoEncontrado) {
-      throw new ProdutoNaoEncontrado("Produto não encontrado");
+      throw new ProdutoNaoEncontradoException(id);
     }
     produtoEncontrado.setDescricao(input.descricao ?? produtoEncontrado.getDescricao());
     produtoEncontrado.setPreco(input.preco ?? produtoEncontrado.getPreco());

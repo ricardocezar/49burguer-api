@@ -29,6 +29,7 @@ const produtoController = new ProdutoController(
 
 produtoRotas.post(
   "/",
+  validateBody(cadastrarProdutoSchema),
   async (req, res, next): Promise<any> => {
     return produtoController.cadastrar(req, res, next);
   }

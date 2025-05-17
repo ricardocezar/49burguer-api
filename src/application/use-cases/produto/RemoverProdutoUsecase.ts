@@ -1,4 +1,4 @@
-import { ProdutoNaoEncontrado } from "@/domain/errors/ProdutoNaoEncontrado";
+import { ProdutoNaoEncontradoException } from "@/domain/errors/ProdutoNaoEncontradoException";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 
 export class RemoverProdutoUsecase {
@@ -7,7 +7,7 @@ export class RemoverProdutoUsecase {
   async execute(id: number): Promise<void> {
     const produto = await this.produtoRepository.buscarPorId(id);
     if (!produto) {
-      throw new ProdutoNaoEncontrado("Produto não encontrado");
+      throw new ProdutoNaoEncontradoException("Produto não encontrado");
     }
     await this.produtoRepository.remover(id);
   }

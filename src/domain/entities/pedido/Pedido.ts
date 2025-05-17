@@ -1,17 +1,15 @@
 import { Cliente } from "../cliente/Cliente";
-import { Comanda, FactoryComanda } from "./Comanda";
+import { FactoryComanda } from "./Comanda";
 import { Item } from "./Item";
 import { StatusPedido } from "./StatusPedido";
 import { uuidv7 } from "uuidv7";
 import { Produto } from "../produto/Produto";
 import { PedidoEstado, recuperarEstado } from "./estado/PedidoEstado";
-import { PedidoCriadoEstado } from "./estado/PedidoCriadoEstado";
-import { OperacaoNaoPermitidaNoStatusAtual } from "@/domain/errors/OperacaoNaoPermitidaNoStatusAtual";
-import { ItemInvalidoException } from "@/domain/errors/ItemInvalidoException";
+import { OperacaoNaoPermitidaException } from "@/domain/errors/OperacaoNaoPermitidaException";
 
 export class Pedido {
   private state: PedidoEstado;
-  private readonly id: string;
+  private readonly id?: string;
   private cliente?: Cliente;
   private itens?: Item[];
   private comanda?: string;
@@ -25,9 +23,9 @@ export class Pedido {
   private dataCancelado?: Date;
 
   constructor(
-    id?: string,
+    id?: string | null,
     itens?: Item[],
-    cliente?: Cliente,
+    cliente?: Cliente | null,
     observacao?: string,
     status: string = StatusPedido.CRIADO,
     comanda?: string,
@@ -40,7 +38,7 @@ export class Pedido {
   ) {
     this.id = id ?? uuidv7();
     this.itens = itens;
-    this.cliente = cliente;
+    this.cliente = cliente ?? undefined;
     this.observacao = observacao;
     this.status = status as StatusPedido;
     this.state = recuperarEstado(this.status, this);
@@ -57,49 +55,75 @@ export class Pedido {
     this.cliente = cliente;
   }
 
+  public removerCliente(): void {
+    this.cliente = undefined;
+  }
+
+  public temOProduto(produto: Produto | number): boolean {
+    const idProduto = typeof produto === "number" ? produto : produto.getId();
+    if (!idProduto) return false;
+    if (!this.itens) return false;
+    return this.itens.some((item) => item.getProduto().getId() === idProduto);
+  }
+
   public adicionarProduto(produto: Produto, quantidade: number): void {
-    if (this.status !== StatusPedido.CRIADO) {
-      throw new OperacaoNaoPermitidaNoStatusAtual(
+    if (this.pedidoNaoAceitaAlteracao()) {
+      throw new OperacaoNaoPermitidaException(
         "Adicionar produtos a um pedido",
-        this.status
+        `Para pedido com status ${this.status}`
       );
     }
-    if (quantidade <= 0) {
-      throw new ItemInvalidoException(
-        `${produto.getDescricao} com quantidade menor ou igual a zero.`
-      );
+    if (this.temOProduto(produto)) {
+      throw new OperacaoNaoPermitidaException(`Adicionar produto ${produto.getDescricao()} já existente no pedido`);
     }
     if (this.itens === undefined) {
       this.itens = [];
-    }
-    const itemExistente = this.itens.find(
-      (i) => i.getProduto().getId() === produto.getId()
-    );
-    if (itemExistente) {
-      itemExistente.adicionarQuantidade(quantidade);
-      return;
     }
     const item = new Item(produto, quantidade);
     this.itens.push(item);
   }
 
-  public removerProduto(produto: Produto, quantidade: number): void {
-    if (this.status !== StatusPedido.CRIADO) {
-      throw new OperacaoNaoPermitidaNoStatusAtual(
-        "Remover produtos de um pedido",
-        this.status
+  public substituirQuantidadeDoProduto(
+    produto: Produto,
+    quantidade: number
+  ): void {
+    if (this.pedidoNaoAceitaAlteracao()) {
+      throw new OperacaoNaoPermitidaException(
+        "Substituir quantidade de produtos de um pedido",
+        `Para pedido com status ${this.status}`
       );
     }
-    if (!this.itens) return;
-    const item = this.itens.find(
-      (i) => i.getProduto().getId() === produto.getId()
-    );
-    if (item) {
-      item.removerQuantidade(quantidade);
-      if (item.vazio()) {
-        this.itens = this.itens.filter((i) => i !== item);
-      }
+    if (!this.temOProduto(produto)) {
+      throw new OperacaoNaoPermitidaException(`Substir quantidade do produto ${produto.getDescricao()} NAO existente no pedido`);
     }
+    const item = this.itens!.find((i) => i.getProduto().getId() === produto.getId());
+    if (item) {
+      item.substituirQuantidade(quantidade);
+    }
+  }
+
+  public removerProduto(produto: Produto | number): boolean {
+    const idProduto = typeof produto === "number" ? produto : produto.getId();
+    if (!idProduto) return false;
+    if (this.pedidoNaoAceitaAlteracao()) {
+      throw new OperacaoNaoPermitidaException(
+        "Remover produtos de um pedido",
+        `Para pedido com status ${this.status}`
+      );
+    }
+    if (!this.temOProduto(produto)) {
+      return false;
+    }
+    this.itens = this.itens!.filter(
+      (i) => i.getProduto().getId() !== idProduto
+    );
+    return true;
+  }
+
+  private pedidoNaoAceitaAlteracao(): boolean {
+    return (
+      this.status !== StatusPedido.CRIADO
+    );
   }
 
   public receber(): void {
@@ -145,7 +169,7 @@ export class Pedido {
     }, 0);
   }
 
-  public getId(): string {
+  public getId(): string | undefined {
     return this.id;
   }
 
@@ -161,7 +185,7 @@ export class Pedido {
     return this.comanda;
   }
 
-  public getTotal(): number {
+  public getValorTotal(): number {
     return this.calcularTotal();
   }
 
@@ -191,6 +215,16 @@ export class Pedido {
 
   public getDataCancelado(): Date | undefined {
     return this.dataCancelado;
+  }
+
+  public setObservacao(observacao: string) {
+    if (this.pedidoNaoAceitaAlteracao()) {
+      throw new OperacaoNaoPermitidaException(
+        "Adicionar observação a um pedido",
+        `Para pedido com status ${this.status}`
+      );
+    }
+    this.observacao = observacao;
   }
 
   public getObservacao(): string | undefined {

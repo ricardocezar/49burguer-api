@@ -3,6 +3,7 @@ import { Produto } from "../entities/produto/Produto";
 import { ResultadoPaginado } from "./ResultadoPaginado";
 
 export interface IProdutoRepository {
+    buscarPorIds(ids: number[]): Promise<Produto[]>;
     buscarPorId(id: number): Promise<Produto | null>;
     buscarTodos(page: number, limit: number): Promise<ResultadoPaginado<Produto>>;
     salvar(produto: Produto): Promise<Produto>;
