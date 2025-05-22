@@ -3,11 +3,10 @@ Tech challenge FIAP Arquitetura de Software
 
 ### Grupo 49
 ![Logo do 49Burguer](./logo_49ers.jpg)
-> RM 364485 - Ricardo Cezar Dias <br/>
-> RM 123456 - Ricardo Cezar Dias <br/>
-> RM 123456 - Ricardo Cezar Dias <br/>
-> RM 123456 - Ricardo Cezar Dias <br/>
-> RM 123456 - Ricardo Cezar Dias <br/>
+> RM - Danilo Ganda <br/>
+> RM - Fernando Nistal <br/>
+> RM364485 - Ricardo Cezar Dias <br/>
+> RM - Thiago Mendes <br/>
 
 ## Instalação
 1. Clone o repositório
@@ -15,7 +14,7 @@ Tech challenge FIAP Arquitetura de Software
     git clone https://github.com/seu-usuario/49burguer-api.git
     cd 49burguer-api
     ```
-2. Crie um arquivo .env
+2. Se certifique que o arquivo .env contem as informacoes de banco de dados
     ```bash
         POSTGRES_USER=postgres
         POSTGRES_PASSWORD=postgres
@@ -33,21 +32,8 @@ Tech challenge FIAP Arquitetura de Software
 4. O banco de dados PostgreSQL e a aplicação estarão acessíveis na sua máquina local após o processo de inicialização.
     > - API: http://localhost:3000
     > - Documentação: http://localhost:3000/api-docs
+    > - BANCO DE DADOS: Dados de acesso no arquivo .env
 
-### Rodando localmente SEM DOCKER
-* Se preferir rodar a aplicação localmente sem o Docker, siga as instruções abaixo:
-1. Instale as dependências
-    ```bash
-        npm install
-    ```
-2. Execute as migrações do banco de dados
-    ```bash
-        npx prisma migrate dev
-    ```
-3. Rode a aplicação localmente
-    ```bash
-        npm run dev
-    ```
 
 ## Estrutura de diretórios
     src/
@@ -56,6 +42,7 @@ Tech challenge FIAP Arquitetura de Software
     │   ├── services/
     │   └── repositories/    # Interfaces (ports) para repositórios
     ├── application/         # Casos de uso
+    │   └── dtos/
     │   └── use-cases/
     ├── infrastructure/      # Implementações concretas (adapters)
     │   ├── database/
