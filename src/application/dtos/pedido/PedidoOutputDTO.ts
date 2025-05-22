@@ -1,12 +1,13 @@
 export class PedidoOutputDTO {
   id: string;
-  cliente?: {cpf: string, nome: string};
+  cliente?: {cpf?: string, nome: string};
   itensPorCategoria?: [
     {
       categoria: string;
       quantidade: number;
       valorSubtotal: number;
       produtos: {
+        id: number;
         descricao: string;
         quantidade: number;
         valorUnitario: number;
@@ -26,14 +27,15 @@ export class PedidoOutputDTO {
 
   constructor(
     id: string,
-    cpf: string,
-    nome: string,
+    cpf?: string,
+    nome?: string,
     itensPorCategoria?: [
       {
         categoria: string;
         quantidade: number;
         valorSubtotal: number;
         produtos: {
+          id: number;
           descricao: string;
           quantidade: number;
           valorUnitario: number;
@@ -52,7 +54,7 @@ export class PedidoOutputDTO {
     dataCancelado?: Date
   ) {
     this.id = id;
-    this.cliente = {cpf, nome};
+    this.cliente = {cpf: cpf || undefined, nome: nome || 'Consumidor'};
     this.itensPorCategoria = itensPorCategoria;
     this.valorTotal = valorTotal ?? 0;
     this.comanda = comanda;

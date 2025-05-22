@@ -7,15 +7,12 @@ services:
     ports:
       - "3000:3000"
     restart: always
-    working_dir: /app
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: sh -c "npm run start"
     depends_on:
       - db
       - migrator
     env_file: .env
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
 
   db:
     image: postgres:15
@@ -23,20 +20,28 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    env_file: .env.docker
+    env_file: .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   migrator:
-    image: node:18-alpine
+    image: node:18-slim
     container_name: 49burguer-migrator
     working_dir: /app
     volumes:
       - .:/app
+      - /app/node_modules
     depends_on:
       - db
-    env_file: .env.docker
-    command: sh -c "npm ci && npx prisma migrate deploy"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1
+    command: sh -c "apt-get update && apt-get install -y openssl ca-certificates && npm ci && npx prisma generate && npx prisma migrate deploy"
     
 volumes:
   postgres_data:

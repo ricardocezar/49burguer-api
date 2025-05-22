@@ -5,11 +5,17 @@ import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 export class ListarProdutosPorCategoriaUsecase {
   constructor(private produtoRepository: IProdutoRepository) {}
 
-  async execute(categoria: Categoria): Promise<ProdutosPorCategoriaOutputDTO> {
-    const produtos =
-      (await this.produtoRepository.buscarPorCategoria(categoria)) || [];
+  async execute(categoria: string): Promise<ProdutosPorCategoriaOutputDTO> {
+    if (!categoria) {
+      throw new Error("Categoria não informada.");
+    }
+    const categoriaEnum = new Categoria(categoria);
+    if (!categoriaEnum) {
+      throw new Error("Categoria inválida.");
+    }
+    const produtos = await this.produtoRepository.buscarPorCategoria(categoriaEnum) || [];
     const produtosOutput = {
-      categoria: categoria.descricao,
+      categoria: categoriaEnum.descricao,
       produtos: produtos.map((produto) => ({
         id: produto.getId(),
         descricao: produto.getDescricao(),

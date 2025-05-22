@@ -7,7 +7,7 @@ export class RemoverProdutoUsecase {
   async execute(id: number): Promise<void> {
     const produto = await this.produtoRepository.buscarPorId(id);
     if (!produto) {
-      throw new ProdutoNaoEncontradoException("Produto não encontrado");
+      throw new ProdutoNaoEncontradoException(id);
     }
     await this.produtoRepository.remover(id);
   }

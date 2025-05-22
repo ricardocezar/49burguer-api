@@ -8,6 +8,8 @@ export interface PedidoEstado {
   finalizarPreparo(): void;
   entregarPedido(): void;
   cancelarPedido(): void;
+  permiteAlteracao(): boolean;
+  naoPermiteAlteracao(): boolean;
 }
 
 export function recuperarEstado(status: StatusPedido, pedido: Pedido): PedidoEstado {

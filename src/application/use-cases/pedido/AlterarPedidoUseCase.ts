@@ -38,7 +38,10 @@ export class AlterarPedidoUseCase {
       return;
     }
     if (input.cliente.identificarCliente === false) {
-      pedido.removerCliente();
+      if (!pedido.getCliente()) {
+        return;
+      }
+      pedido.removerCliente(pedido.getCliente()!.getCpf());
       return;
     }
     if (!input.cliente.cpf) {
@@ -48,9 +51,7 @@ export class AlterarPedidoUseCase {
     if (cpfInput.numero === pedido.getCliente()?.getCpf()) {
       return;
     }
-    const cliente = await this.clienteRepository.buscarPorCpf(
-      input.cliente.cpf
-    );
+    const cliente = await this.clienteRepository.buscarPorCpf(cpfInput.numero);
     if (!cliente) {
       throw new ClienteNaoEncontradoException(input.cliente.cpf);
     }
@@ -61,6 +62,18 @@ export class AlterarPedidoUseCase {
     if (!input.itens || input.itens.length === 0) {
       return;
     }
+    const itensRepetidos = input.itens.filter((item, index) => {
+      return (
+        input.itens!.findIndex((i) => i.produtoId === item.produtoId) !== index
+      );
+    });
+    if (itensRepetidos.length > 0) {
+      throw new ItemInvalidoException(
+        `Existem itens repetidos no pedido: ${itensRepetidos
+          .map((item) => item.produtoId)
+          .join(", ")}`
+      );
+    }
     const produtos = await this.produtoRepository.buscarPorIds(
       input.itens.filter((item) => !item.remover).map((item) => item.produtoId)
     );
@@ -70,9 +83,7 @@ export class AlterarPedidoUseCase {
   }
 
   private async removerProdutos(input: AlterarPedidoInputDTO, pedido: Pedido) {
-    const produtosARemover = input.itens!.filter(
-      (item) => item.remover
-    );
+    const produtosARemover = input.itens!.filter((item) => item.remover);
     if (produtosARemover.length === 0) {
       return;
     }

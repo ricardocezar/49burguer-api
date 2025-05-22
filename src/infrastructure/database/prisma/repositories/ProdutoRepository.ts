@@ -1,8 +1,8 @@
-import { Categoria } from '@/domain/entities/produto/Categoria';
+import { Categoria } from 'src/domain/entities/produto/Categoria';
 import { Produto } from "@/domain/entities/produto/Produto";
 import { IProdutoRepository } from "@/domain/repositories/IProdutoRepository";
 import { ResultadoPaginado } from "@/domain/repositories/ResultadoPaginado";
-import { PrismaClient, Categoria as PrismaCategoria } from "@prisma/client";
+import { PrismaClient, Categoria as PrismaCategoria, $Enums } from "@prisma/client";
 
 export class ProdutoRepository implements IProdutoRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -107,9 +107,10 @@ export class ProdutoRepository implements IProdutoRepository {
   }
 
   async buscarPorCategoria(categoria: Categoria): Promise<Produto[]> {
+    const categoriaPrisma =  $Enums.Categoria[categoria.descricao];
     return this.prisma.produto
       .findMany({
-        where: { categoria: categoria.descricao as PrismaCategoria, ativo: true },
+        where: { categoria: categoriaPrisma, ativo: true },
         orderBy: [{ categoria: "asc" }, { descricao: "asc" }],
       })
       .then((produtos) => {

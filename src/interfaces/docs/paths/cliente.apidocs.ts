@@ -1,7 +1,7 @@
 const clientesApi = {
   "/v1/clientes": {
     get: {
-      tags: ["Cadastro de Clientes"],
+      tags: ["Clientes"],
       summary: "Listar todos os clientes",
       parameters: [
         {
@@ -55,7 +55,7 @@ const clientesApi = {
       },
     },
     post: {
-      tags: ["Cadastro de Clientes"],
+      tags: ["Clientes"],
       summary: "Cadastrar um novo cliente",
       requestBody: {
         required: true,
@@ -128,8 +128,58 @@ const clientesApi = {
         },
       },
     },
+  },
+  "/v1/clientes/{cpf}": {
+    get: {
+      tags: ["Clientes"],
+      summary: "Buscar cliente por CPF",
+      parameters: [
+        {
+          name: "cpf",
+          in: "path",
+          required: true,
+          description: "CPF do cliente no formato XXX.XXX.XXX-XX",
+          schema: {
+            type: "string",
+            pattern: "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Cliente encontrado",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Cliente",
+              },
+            },
+          },
+        },
+        400: {
+          description: "Erro de validação",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
+              },
+            },
+          },
+        },
+        404: {
+          description: "Cliente não encontrado",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/ErrorResponse",
+              },
+            },
+          },
+        },
+      },
+    },
     patch: {
-      tags: ["Cadastro de Clientes"],
+      tags: ["Clientes"],
       summary: "Atualizar um cliente existente",
       parameters: [
         {
@@ -200,7 +250,7 @@ const clientesApi = {
       },
     },
     delete: {
-      tags: ["Cadastro de Clientes"],
+      tags: ["Clientes"],
       summary: "Remover um cliente",
       parameters: [
         {
@@ -217,56 +267,6 @@ const clientesApi = {
       responses: {
         204: {
           description: "Cliente removido com sucesso",
-        },
-        404: {
-          description: "Cliente não encontrado",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/ErrorResponse",
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  "/v1/clientes/{cpf}": {
-    get: {
-      tags: ["Cadastro de Clientes"],
-      summary: "Buscar cliente por CPF",
-      parameters: [
-        {
-          name: "cpf",
-          in: "path",
-          required: true,
-          description: "CPF do cliente no formato XXX.XXX.XXX-XX",
-          schema: {
-            type: "string",
-            pattern: "^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "Cliente encontrado",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/Cliente",
-              },
-            },
-          },
-        },
-        400: {
-          description: "Erro de validação",
-          content: {
-            "application/json": {
-              schema: {
-                $ref: "#/components/schemas/ErrorResponse",
-              },
-            },
-          },
         },
         404: {
           description: "Cliente não encontrado",

@@ -10,21 +10,16 @@ import { validateBody, validateParams } from "../middlewares/validateRequest";
 import { cadastrarProdutoSchema } from "../validators/produto/produto-cadastrar.schema";
 import { paramIdNumberSchema } from "../validators/param-id-number.schema";
 import { categoriaSchema } from "../validators/produto/categoria.schema";
+import { produtoUseCases } from "./di-utils";
 
 const produtoRotas = Router();
 
-const prismaClient = new PrismaClient();
-const produtoRepository = new ProdutoRepository(prismaClient);
-const cadastrarProdutoUseCase = new CadastrarProdutoUsecase(produtoRepository);
-const listarProdutosPorCategoriaUseCase = new ListarProdutosPorCategoriaUsecase(produtoRepository);
-const atualizarProdutoUseCase = new AtualizarProdutoUsecase(produtoRepository);
-const removerProdutoUseCase = new RemoverProdutoUsecase(produtoRepository);
-
 const produtoController = new ProdutoController(
-  cadastrarProdutoUseCase,
-  atualizarProdutoUseCase,
-  removerProdutoUseCase,
-  listarProdutosPorCategoriaUseCase
+  produtoUseCases.cadastrarProduto,
+  produtoUseCases.atualizarProduto,
+  produtoUseCases.removerProduto,
+  produtoUseCases.listarProdutosPorCategoriaUseCase,
+  produtoUseCases.obterProdutoPorId
 );
 
 produtoRotas.post(
@@ -57,6 +52,14 @@ produtoRotas.get(
   validateParams(categoriaSchema),
   async (req, res, next): Promise<any> => {
     return produtoController.listarPorCategoria(req, res, next);
+  }
+);
+
+produtoRotas.get(
+  "/:id",
+  validateParams(paramIdNumberSchema),
+  async (req, res, next): Promise<any> => {
+    return produtoController.buscarPorId(req, res, next);
   }
 );
 

@@ -18,7 +18,7 @@ swaggerConfig(app);
 
 app.use('/api', routes);
 
-app.use(errorHandler); //nao tira esse caraio daqui
+app.use(errorHandler);
 app.listen(port, () => console.log(`Server rodando na porta ${port}`));
 
 export default app;

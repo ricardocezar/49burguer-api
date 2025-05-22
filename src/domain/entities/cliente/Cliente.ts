@@ -8,9 +8,11 @@ export class Cliente {
 
   constructor(
     { nome, cpf, email }:
-    {nome: string,
-    cpf: string,
-    email: string}
+    { 
+      nome: string,
+      cpf: string,
+      email: string
+    }
   ) {
     this.nome = nome;
     this.cpf = new Cpf(cpf);

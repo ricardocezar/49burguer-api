@@ -3,6 +3,7 @@ import Joi from "joi";
 export const categoriaSchema = Joi.object({
   categoria: Joi.string()
     .valid("LANCHE", "ACOMPANHAMENTO", "SOBREMESA", "BEBIDA")
+    .insensitive()
     .required()
     .messages({
       "string.base": "A categoria deve ser uma string",

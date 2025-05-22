@@ -1,0 +1,15 @@
+import Joi from "joi";
+
+export const incluirClienteNoPedidoSchema = Joi.object({
+  cpf: Joi.string()
+    .length(14)
+    .pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)
+    .required()
+    .messages({
+      "string.base": "O CPF deve ser uma string",
+      "string.empty": "O CPF não pode ser vazio",
+      "string.length": "O CPF deve ter exatamente 14 caracteres",
+      "string.pattern.base": "O CPF deve estar no formato XXX.XXX.XXX-XX",
+      "any.required": "O CPF é obrigatório",
+    }),
+});

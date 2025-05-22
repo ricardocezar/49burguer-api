@@ -1,5 +1,6 @@
-import clientesApi from "./paths/clientes.apidocs";
+import clientesApi from "./paths/cliente.apidocs";
 import produtosApi from "./paths/produto.apidocs";
+import { pedidosApi } from "./paths/pedido.apidocs";
 
 const swaggerDocument = {
   openapi: "3.0.0",
@@ -15,17 +16,22 @@ const swaggerDocument = {
   ],
   tags: [
     {
-      name: "Cadastro de Clientes",
-      description: "Endpoints relacionados aos clientes",
+      name: "Clientes",
+      description: "Cadastro e Manutenção de clientes",
     },
     {
-      name: "Cadastro de Produtos",
-      description: "Endpoints relacionados aos produtos",
+      name: "Produtos",
+      description: "Cadastro e Manutenção de produtos",
+    },
+    {
+      name: "Pedidos",
+      description: "Criar e gerir de pedidos",
     },
   ],
   paths: {
     ...clientesApi,
     ...produtosApi,
+    ...pedidosApi
   },
   components: {
     schemas: {
@@ -74,33 +80,27 @@ const swaggerDocument = {
         properties: {
           id: {
             type: "string",
-            format: "uuid",
             example: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           },
-          dataHora: {
-            type: "string",
-            format: "date-time",
-            example: "2025-04-17T12:30:00Z",
-          },
-          comanda: { type: "integer", example: 5 },
           cliente: {
             type: "object",
+            required: ["nome"],
             properties: {
-              nome: { type: "string", example: "João Silva" },
               cpf: { type: "string", example: "123.456.789-00" },
-              email: { type: "string", example: "email@provedor.com" },
+              nome: { type: "string", example: "João Silva" },
             },
           },
-          categorias: {
+          itensPorCategoria: {
             type: "array",
             items: {
               type: "object",
               properties: {
-                descricao: {
-                  type: "string",
-                  example: "Lanche",
-                  enum: ["Lanche", "Acompanhamento", "Bebida", "Sobremesa"],
-                  description: "Categoria do produto",
+                categoria: { type: "string", example: "LANCHE" },
+                quantidade: { type: "integer", example: 2 },
+                valorSubtotal: {
+                  type: "number",
+                  format: "float",
+                  example: 29.98,
                 },
                 produtos: {
                   type: "array",
@@ -108,31 +108,82 @@ const swaggerDocument = {
                     type: "object",
                     properties: {
                       id: { type: "integer", example: 1 },
-                      descricao: { type: "string", example: "Hambúrguer" },
-                      precoUnitario: {
+                      descricao: {
+                        type: "string",
+                        example: "Hambúrguer Artesanal",
+                      },
+                      quantidade: { type: "integer", example: 2 },
+                      valorUnitario: {
                         type: "number",
                         format: "float",
                         example: 14.99,
-                      },
-                      quantidade: { type: "integer", example: 2 },
-                      subTotal: {
-                        type: "number",
-                        format: "float",
-                        example: 29.98,
                       },
                     },
                   },
                 },
               },
             },
+            example: [
+              {
+                categoria: "LANCHE",
+                quantidade: 2,
+                valorSubtotal: 29.98,
+                produtos: [
+                  {
+                    id: 1,
+                    descricao: "Hambúrguer Artesanal",
+                    quantidade: 2,
+                    valorUnitario: 14.99,
+                  },
+                ],
+              },
+            ],
           },
+          valorTotal: { type: "number", format: "float", example: 59.9 },
+          comanda: { type: "string", example: "15" },
           observacao: { type: "string", example: "Sem cebola" },
           status: {
             type: "string",
-            enum: ["RECEBIDO", "EM_PREPARACAO", "PRONTO", "FINALIZADO"],
+            enum: [
+              "RECEBIDO",
+              "EM_PREPARACAO",
+              "PRONTO",
+              "FINALIZADO",
+              "CANCELADO",
+              "ENTREGUE",
+            ],
             example: "RECEBIDO",
           },
-          total: { type: "number", format: "float", example: 29.99 },
+          dataPedido: {
+            type: "string",
+            format: "date-time",
+            example: "2025-05-20T12:00:00Z",
+          },
+          dataRecebido: {
+            type: "string",
+            format: "date-time",
+            example: "2025-05-20T12:05:00Z",
+          },
+          dataEmPreparo: {
+            type: "string",
+            format: "date-time",
+            example: "2025-05-20T12:10:00Z",
+          },
+          dataFinalizado: {
+            type: "string",
+            format: "date-time",
+            example: "2025-05-20T12:20:00Z",
+          },
+          dataEntregue: {
+            type: "string",
+            format: "date-time",
+            example: "2025-05-20T12:30:00Z",
+          },
+          dataCancelado: {
+            type: "string",
+            format: "date-time",
+            example: "2025-05-20T12:40:00Z",
+          },
         },
       },
       ErrorResponse: {
@@ -151,7 +202,7 @@ const swaggerDocument = {
             type: "array",
             items: { type: "string" },
             example: [
-              "O CPF já está cadastrado",
+              "CPF fora do formato",
               "O nome deve ter pelo menos 3 caracteres",
             ],
           },

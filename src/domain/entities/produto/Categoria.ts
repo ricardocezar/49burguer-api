@@ -4,7 +4,7 @@ enum CategoriaEnum {
   LANCHE = "LANCHE",
   ACOMPANHAMENTO = "ACOMPANHAMENTO",
   BEBIDA = "BEBIDA",
-  SOBREMESA = "SOBREMESA",
+  SOBREMESA = "SOBREMESA"
 }
 
 export class Categoria {
@@ -27,7 +27,7 @@ export class Categoria {
     return Object.values(CategoriaEnum).includes(value as CategoriaEnum);
   }
 
-  get descricao(): CategoriaEnum {
+  get descricao(): string {
     return this.valor;
   }
 

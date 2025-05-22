@@ -1,7 +1,9 @@
+import { get } from "http";
+
 const produtosApi = {
   "/v1/produtos": {
     post: {
-      tags: ["Cadastro de Produtos"],
+      tags: ["Produtos"],
       summary: "Cadastrar um novo produto",
       description: "Cadastra um novo produto.",
       operationId: "cadastrarProduto",
@@ -54,8 +56,43 @@ const produtosApi = {
       },
     },},
   "/v1/produtos/{id}": {
+    get: {
+      tags: ["Produtos"],
+      summary: "Buscar um produto por ID",
+      description: "Busca um produto pelo seu ID.",
+      operationId: "buscarProdutoPorId",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          required: true,
+          description: "ID do produto a ser buscado.",
+          schema: {
+            type: "integer",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Produto encontrado.",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Produto",
+              },
+            },
+          },
+        },
+        404: {
+          description: "Produto não encontrado.",
+        },
+        500: {
+          description: "Erro interno do servidor.",
+        },
+      },
+    },
     patch: {
-      tags: ["Cadastro de Produtos"],
+      tags: ["Produtos"],
       summary: "Atualizar um produto existente",
       description: "Atualiza os dados de um produto existente.",
       operationId: "atualizarProduto",
@@ -123,7 +160,7 @@ const produtosApi = {
       },
     },
     delete: {
-      tags: ["Cadastro de Produtos"],
+      tags: ["Produtos"],
       summary: "Remover um produto existente",
       description: "Remove um produto existente.",
       operationId: "removerProduto",
@@ -153,7 +190,7 @@ const produtosApi = {
   },
   "/v1/produtos/categorias/{categoria}": {
     get: {
-      tags: ["Cadastro de Produtos"],
+      tags: ["Produtos"],
       summary: "Listar produtos por categoria",
       description: "Lista todos os produtos de uma determinada categoria.",
       operationId: "listarProdutosPorCategoria",
@@ -163,6 +200,8 @@ const produtosApi = {
           in: "path",
           required: true,
           description: "Nome da categoria dos produtos.",
+          enum: ["LANCHE", "ACOMPANHAMENTO", "BEBIDA", "SOBREMESA"],
+          example: "LANCHE",
           schema: {
             type: "string",
           },

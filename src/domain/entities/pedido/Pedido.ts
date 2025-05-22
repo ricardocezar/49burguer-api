@@ -6,6 +6,7 @@ import { uuidv7 } from "uuidv7";
 import { Produto } from "../produto/Produto";
 import { PedidoEstado, recuperarEstado } from "./estado/PedidoEstado";
 import { OperacaoNaoPermitidaException } from "@/domain/errors/OperacaoNaoPermitidaException";
+import { ClienteNaoEncontradoException } from "@/domain/errors/ClienteNaoEncontradoException";
 
 export class Pedido {
   private state: PedidoEstado;
@@ -55,26 +56,24 @@ export class Pedido {
     this.cliente = cliente;
   }
 
-  public removerCliente(): void {
+  public removerCliente(cpf: string): void {
+    if (!this.getCliente() || this.getCliente()!.getCpf() !== cpf) {
+      throw new ClienteNaoEncontradoException(cpf);
+    }
     this.cliente = undefined;
   }
 
-  public temOProduto(produto: Produto | number): boolean {
-    const idProduto = typeof produto === "number" ? produto : produto.getId();
-    if (!idProduto) return false;
-    if (!this.itens) return false;
-    return this.itens.some((item) => item.getProduto().getId() === idProduto);
+  public substituirCliente(cliente: Cliente): void {
+    this.coibirAlteracaoEmStatusNaoPermitido();
+    this.cliente = cliente;
   }
 
   public adicionarProduto(produto: Produto, quantidade: number): void {
-    if (this.pedidoNaoAceitaAlteracao()) {
-      throw new OperacaoNaoPermitidaException(
-        "Adicionar produtos a um pedido",
-        `Para pedido com status ${this.status}`
-      );
-    }
+    this.coibirAlteracaoEmStatusNaoPermitido();
     if (this.temOProduto(produto)) {
-      throw new OperacaoNaoPermitidaException(`Adicionar produto ${produto.getDescricao()} já existente no pedido`);
+      throw new OperacaoNaoPermitidaException(
+        `Adicionar produto ${produto.getDescricao()} já existente no pedido`
+      );
     }
     if (this.itens === undefined) {
       this.itens = [];
@@ -87,16 +86,15 @@ export class Pedido {
     produto: Produto,
     quantidade: number
   ): void {
-    if (this.pedidoNaoAceitaAlteracao()) {
+    this.coibirAlteracaoEmStatusNaoPermitido();
+    if (!this.temOProduto(produto)) {
       throw new OperacaoNaoPermitidaException(
-        "Substituir quantidade de produtos de um pedido",
-        `Para pedido com status ${this.status}`
+        `Substir quantidade do produto ${produto.getDescricao()} NAO existente no pedido`
       );
     }
-    if (!this.temOProduto(produto)) {
-      throw new OperacaoNaoPermitidaException(`Substir quantidade do produto ${produto.getDescricao()} NAO existente no pedido`);
-    }
-    const item = this.itens!.find((i) => i.getProduto().getId() === produto.getId());
+    const item = this.itens!.find(
+      (i) => i.getProduto().getId() === produto.getId()
+    );
     if (item) {
       item.substituirQuantidade(quantidade);
     }
@@ -105,12 +103,7 @@ export class Pedido {
   public removerProduto(produto: Produto | number): boolean {
     const idProduto = typeof produto === "number" ? produto : produto.getId();
     if (!idProduto) return false;
-    if (this.pedidoNaoAceitaAlteracao()) {
-      throw new OperacaoNaoPermitidaException(
-        "Remover produtos de um pedido",
-        `Para pedido com status ${this.status}`
-      );
-    }
+    this.coibirAlteracaoEmStatusNaoPermitido();
     if (!this.temOProduto(produto)) {
       return false;
     }
@@ -120,10 +113,11 @@ export class Pedido {
     return true;
   }
 
-  private pedidoNaoAceitaAlteracao(): boolean {
-    return (
-      this.status !== StatusPedido.CRIADO
-    );
+  public temOProduto(produto: Produto | number): boolean {
+    const idProduto = typeof produto === "number" ? produto : produto.getId();
+    if (!idProduto) return false;
+    if (!this.itens) return false;
+    return this.itens.some((item) => item.getProduto().getId() === idProduto);
   }
 
   public receber(): void {
@@ -156,6 +150,15 @@ export class Pedido {
     this.state.cancelarPedido();
     this.dataCancelado = new Date();
     this.status = StatusPedido.CANCELADO;
+  }
+
+  private coibirAlteracaoEmStatusNaoPermitido(): void {
+    if (this.state.naoPermiteAlteracao()) {
+      throw new OperacaoNaoPermitidaException(
+        "Alterar pedido",
+        `Para pedido com status ${this.status}`
+      );
+    }
   }
 
   public setEstado(estado: PedidoEstado): void {
@@ -218,12 +221,7 @@ export class Pedido {
   }
 
   public setObservacao(observacao: string) {
-    if (this.pedidoNaoAceitaAlteracao()) {
-      throw new OperacaoNaoPermitidaException(
-        "Adicionar observação a um pedido",
-        `Para pedido com status ${this.status}`
-      );
-    }
+    this.coibirAlteracaoEmStatusNaoPermitido();
     this.observacao = observacao;
   }
 

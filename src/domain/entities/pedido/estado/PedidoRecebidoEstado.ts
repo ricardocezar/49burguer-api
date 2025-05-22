@@ -11,6 +11,14 @@ export class PedidoRecebidoEstado implements PedidoEstado {
     this.pedido = pedido;
   }
 
+  permiteAlteracao(): boolean {
+    return false;
+  }
+
+  naoPermiteAlteracao(): boolean {
+    return !this.permiteAlteracao();
+  }
+
   receberPedido(): void {
     throw new Error("Pedido já recebido.");
   }

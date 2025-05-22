@@ -9,7 +9,7 @@ export const criarPedidoSchema = Joi.object({
       "string.base": "O CPF deve ser uma string",
       "string.empty": "O CPF não pode ser vazio",
       "string.length": "O CPF deve ter exatamente 14 caracteres",
-      "string.pattern.name": "O CPF deve estar no formato XXX.XXX.XXX-XX",
+      "string.pattern.base": "O CPF deve estar no formato XXX.XXX.XXX-XX",
     }),
   itens: Joi.array()
     .items(
@@ -27,6 +27,7 @@ export const criarPedidoSchema = Joi.object({
           .number()
           .integer()
           .min(1)
+          .max(30)
           .required()
           .messages({
             "number.base": "A quantidade deve ser um número inteiro",

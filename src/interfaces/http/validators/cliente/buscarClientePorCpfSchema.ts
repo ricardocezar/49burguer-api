@@ -10,6 +10,6 @@ export const buscarClientePorCpfSchema = Joi.object({
       "string.empty": "O CPF não pode ser vazio",
       "string.length": "O CPF deve ter exatamente 11 caracteres",
       "any.required": "O CPF é obrigatório",
-      "string.pattern.name": "O CPF deve estar no formato XXX.XXX.XXX-XX",
+      "string.pattern.base": "O CPF deve estar no formato XXX.XXX.XXX-XX",
     }),
 });

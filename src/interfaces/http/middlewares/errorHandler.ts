@@ -1,11 +1,11 @@
-import { ClienteJaCadastradoException } from "@/domain/errors/ClienteJaCadastradoException";
-import { CpfInvalidoException } from "@/domain/errors/CpfInvalidoException";
 import { ErrorRequestHandler } from "express";
 import { ErrorResponse } from "../dtos/ErrorResponse";
 import { ClienteNaoEncontradoException } from "@/domain/errors/ClienteNaoEncontradoException";
 import { CategoriaInvalidaException } from "@/domain/errors/CategoriaInvalidaException";
 import { PrecoInvalidoException } from "@/domain/errors/PrecoInvalidoException";
 import { ProdutoNaoEncontradoException } from "@/domain/errors/ProdutoNaoEncontradoException";
+import { ClienteJaCadastradoException } from "@/domain/errors/ClienteJaCadastradoException";
+import { CpfInvalidoException } from "@/domain/errors/CpfInvalidoException";
 
 export const errorHandler: ErrorRequestHandler = (
   err: any,

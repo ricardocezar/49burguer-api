@@ -10,6 +10,15 @@ export class PedidoCriadoEstado implements PedidoEstado {
     this.pedido = pedido;
   }
 
+  permiteAlteracao(): boolean {
+    return true;
+  }
+
+  naoPermiteAlteracao(): boolean {
+    return !this.permiteAlteracao();
+  }
+
+
   receberPedido(): void {
     if (this.pedido.getItens() === undefined || this.pedido.getItens().length === 0) {
       throw new Error("Pedido não pode ser recebido sem itens.");

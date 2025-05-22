@@ -90,4 +90,5 @@ model Item {
   produto           Produto @relation(fields: [produtoId], references: [id])
   
   @@map("itens")
+  @@unique([pedidoId, produtoId])
 }

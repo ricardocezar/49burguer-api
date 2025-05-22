@@ -2,6 +2,7 @@ import { ProdutoOutputDTO } from "@/application/dtos/produto/ProdutoOutputDTO";
 import { AtualizarProdutoUsecase } from "@/application/use-cases/produto/AtualizarProdutoUsecase";
 import { CadastrarProdutoUsecase } from "@/application/use-cases/produto/CadastrarProdutoUsecase";
 import { ListarProdutosPorCategoriaUsecase } from "@/application/use-cases/produto/ListarProdutosPorCategoriaUsecase";
+import { ObterProdutoPorIdUseCase } from "@/application/use-cases/produto/ObterProdutoPorIdUseCase";
 import { RemoverProdutoUsecase } from "@/application/use-cases/produto/RemoverProdutoUsecase";
 
 export class ProdutoController {
@@ -9,7 +10,8 @@ export class ProdutoController {
     private readonly cadastrarProdutoUsecase: CadastrarProdutoUsecase,
     private readonly atualizarProdutoUsecase: AtualizarProdutoUsecase,
     private readonly removerProdutoUsecase: RemoverProdutoUsecase,
-    private readonly listarProdutosPorCategoriaUsecase: ListarProdutosPorCategoriaUsecase
+    private readonly listarProdutosPorCategoriaUsecase: ListarProdutosPorCategoriaUsecase,
+    private readonly obterProdutoPorIdUseCase: ObterProdutoPorIdUseCase // ObterProdutoPorIdUseCase
   ) {}
 
   async cadastrar(req: any, res: any, next: any) {
@@ -50,9 +52,20 @@ export class ProdutoController {
     }
   }
 
+  async buscarPorId(req: any, res: any, next: any) {
+    try {
+      const { id } = req.params;
+      const produto = await this.obterProdutoPorIdUseCase.execute(Number(id));
+      return res.status(200).json(produto);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   async listarPorCategoria(req: any, res: any, next: any) {
     try {
       const { categoria } = req.params;
+      console.log(categoria);
       const produtos = await this.listarProdutosPorCategoriaUsecase.execute(categoria);
       return res.status(200).json(produtos);
     } catch (error) {

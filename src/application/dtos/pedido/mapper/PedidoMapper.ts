@@ -11,17 +11,29 @@ export class PedidoMapper {
       itensCategorizados = pedido.getItens().reduce((acc, item) => {
         const categoria = item.getProduto().getCategoria();
         const produto = {
+          id: item.getProduto().getId(),
           descricao: item.getProduto().getDescricao(),
           quantidade: item.getQuantidade(),
           valorUnitario: item.getValorUnitario(),
         };
+
         const categoriaExistente = acc.find(
           (cat) => cat.categoria === categoria
         );
+
         if (categoriaExistente) {
+          const produtoExistente = categoriaExistente.produtos.find(
+            (prod) =>
+              prod.id === produto.id
+          );
+
+          if (produtoExistente) {
+            produtoExistente.quantidade += produto.quantidade;
+          } else {
+            categoriaExistente.produtos.push(produto);
+          }
           categoriaExistente.quantidade += item.getQuantidade();
           categoriaExistente.valorSubtotal += item.getValorTotalDoItem();
-          categoriaExistente.produtos.push(produto);
         } else {
           acc.push({
             categoria,
@@ -30,15 +42,16 @@ export class PedidoMapper {
             produtos: [produto],
           });
         }
+
         return acc;
       }, [] as any);
     }
     return {
       id: pedido.getId()!,
-      cliente: pedido.getCliente
+      cliente: pedido.getCliente()
         ? {
-            cpf: pedido.getCliente()!.getCpf(),
-            nome: pedido.getCliente()!.getNome(),
+            cpf: pedido.getCliente()!.getCpf() ?? "",
+            nome: pedido.getCliente()!.getNome() ?? "",
           }
         : undefined,
       itensPorCategoria: itensCategorizados,

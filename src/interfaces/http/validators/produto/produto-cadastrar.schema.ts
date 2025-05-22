@@ -15,7 +15,7 @@ export const cadastrarProdutoSchema = Joi.object({
     "any.required": "O preço é obrigatório",
     "number.greater": "O preço deve ser maior que 0",
   }),
-  categoria: Joi.string().required().valid('LANCHE', 'ACOMPANHAMENTO', 'SOBREMESA', 'BEBIDA').messages({
+  categoria: Joi.string().required().valid('LANCHE', 'ACOMPANHAMENTO', 'SOBREMESA', 'BEBIDA').insensitive().messages({
     "string.base": "A categoria deve ser uma string",
     "string.empty": "A categoria não pode ser vazia",
     "any.required": "A categoria é obrigatória",
