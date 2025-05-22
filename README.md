@@ -11,7 +11,7 @@ Tech challenge FIAP Arquitetura de Software
 ## Instalação
 1. Clone o repositório
     ```bash
-    git clone https://github.com/seu-usuario/49burguer-api.git
+    git clone https://github.com/ricardocezar/49burguer-api.git
     cd 49burguer-api
     ```
 2. Se certifique que o arquivo .env contem as informacoes de banco de dados
